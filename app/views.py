@@ -76,7 +76,11 @@ def profiles():
     else:
       return render_template('profiles.html',profiles=profiles)  
     
-#@app.route('/profile/userid', methods=('GET', 'POST'))
+@app.route('/profile/<userid>', methods=('GET', 'POST'))
+def show_user(userid):
+    user = User.query.filter_by(userid=userid).first_or_404()
+    return render_template('profiles.html', user=user)
+    
 
 @app.route('/uploads/<path:filename>')
 def download_file(filename):
