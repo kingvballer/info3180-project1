@@ -8,14 +8,13 @@ This file creates your application.
 
 from app import db, app
 from app.models import User
-from flask import render_template, request, redirect, url_for, flash, jsonify
+from flask import render_template, request, redirect, url_for, flash, jsonify, send_from_directory
 from .forms import userForm
 from werkzeug import secure_filename
 
 import os
 import json
 import random
-
 
 
 
@@ -78,6 +77,11 @@ def profiles():
       return render_template('profiles.html',profiles=profiles)  
     
 #@app.route('/profile/userid', methods=('GET', 'POST'))
+
+@app.route('/uploads/<path:filename>')
+def download_file(filename):
+    return send_from_directory(os.path.dirname(os.path.abspath(__file__)) + '/../pics/',
+                               filename)
 
 
 @app.route('/<file_name>.txt')
