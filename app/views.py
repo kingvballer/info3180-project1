@@ -10,9 +10,12 @@ from app import db, app
 from app.models import User
 from flask import render_template, request, redirect, url_for, flash, jsonify
 from .forms import userForm
+from werkzeug import secure_filename
 
+import os
 import json
 import random
+
 
 
 
@@ -42,18 +45,20 @@ def about():
 @app.route('/profile/', methods=('GET', 'POST'))
 def profile():
     form = userForm()
-    userid = random.random(randint(63000000, 63999999))
-    if request.method == 'POST' and form.validate():
+    userid = random.randint(63000000, 63999999)
+    print 'test'
+    if request.method == 'POST': # and form.validate_on_submit():
+        print 'validated'
         firstname = request.form['firstname']
         lastname = request.form['lastname']
         age = request.form['age']
         sex = request.form['sex']
-        file = request.file['image']
+        file = request.files['image']
         image = secure_filename(file.filename)
-        file.save(os.path.join("project1/project1/pics",image))
-        user = User(userid, firstname, lastname, sex, age, image)
-        db_session.add(user)
-        db_session.commit()
+        file.save(os.path.join("pics",image))
+        user = User(userid, image, firstname, lastname, age, sex)
+        db.session.add(user)
+        db.session.commit()
         flash('File Uploaded successfully')
         return redirect(url_for('profile'))
     return render_template('profile.html', form=form)
@@ -72,8 +77,8 @@ def profiles():
     else:
       return render_template('profiles.html',profiles=profiles)  
     
-@app.route('/profile/userid', methods=('GET', 'POST'))
-def ():
+#@app.route('/profile/userid', methods=('GET', 'POST'))
+
 
 @app.route('/<file_name>.txt')
 def send_text_file(file_name):
